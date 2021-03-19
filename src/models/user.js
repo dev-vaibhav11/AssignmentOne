@@ -46,6 +46,12 @@ const userSchema=new mongoose.Schema({
             }
         }
     },
+    gender:{
+        type:String
+    },
+    dob:{
+        type:Date
+    },
     tokens:[{
         token:{
             type:String,
