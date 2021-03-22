@@ -2,7 +2,7 @@ const express=require('express')
 const router=new express.Router()
 const Story=require('../models/story')
 const Comment=require('../models/comment')
-const Likes=require('../models/like')
+const Like=require('../models/like')
 const Unlike=require('../models/unlike')
 const auth=require('../middleware/auth')
 const multer=require('multer')
@@ -69,8 +69,9 @@ router.post('/story/comment',auth,async(req,res)=>{
 router.get('/story/readcomment/:storyId',async(req,res)=>{
     
     try{
-        const story=await Story.findOne({_id:req.params.storyId}).populate("comments");
-        console.log(story.comments)
+        const story=await Story.findOne({_id:req.params.storyId}).populate("comments","comment");
+        console.log(story)
+        console.log(story.comments.length)
         res.send(story)
     }catch(e)
     {
@@ -79,23 +80,59 @@ router.get('/story/readcomment/:storyId',async(req,res)=>{
 
 })
 
+
+
 //like on story
 router.post('/story/like',auth,async(req,res)=>{
     try{
+        //find a story
+        const story=await Story.findOne({_id:req.body.story_id})
         // console.log(req.body.like)
-         const likes=new Likes({
+         const like=new Like({
              like:req.body.like,
              owner:req.user._id,
              story_id:req.body.story_id
          })
-         await likes.save()
-         console.log(likes)
-         res.send(likes)
+         await like.save()
+         
+         //add like id in Story
+        story.likes.push(like._id)
+        await story.save()
+        
+         
+         console.log(like)
+         res.send(like)
  
      }catch(e){
  
      }
  })
+
+//read Likes on particular post
+router.get('/story/readlike/:storyId',async(req,res)=>{
+    // console.log(req.params.storyId)
+      
+      try{
+          const story=await Story.findOne({_id:req.params.storyId}).populate({path:"likes",
+                                                              populate:("owner")});
+          if(!story)
+          {
+              throw  new Error("no story")    
+          }
+          
+          console.log(story.likes)
+          story.likes.forEach(val=>{
+              console.log(val.owner.name)
+          })
+          console.log("total likes "+story.likes.length)
+          res.send(story)
+      }catch(e)
+      {
+          res.send(e)
+      }
+  
+  })
+  
 
 //unlike to story
 router.post('/story/unlike',auth,async(req,res)=>{

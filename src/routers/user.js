@@ -117,22 +117,24 @@ router.post('/request-status',auth,async(req,res)=>{
     //0=arrive
     //1=accept
     //2=reject
-    const senderId=req.body.id
-    const receiverId=req.user._id
+    const sender_id=req.body.id
+    const receiver_id=req.user._id
     const status=req.body.status
+    
+    console.log(sender_id+"--"+receiver_id+"--"+status)
     let reqStatus
     try{
-        if(status===1)
+        if(status==="1")
         {
-            reqStatus=await FriendRequest
+            reqStatus=await FriendRequest.where({sender_id,receiver_id}).update({$set: {'status':1}}).exec();
         }
-        if(status===2)
+        if(status==="2")
         {
-             reqStatus=await FriendRequest.findOneAndDelete({sender_id:senderId,receiver_id:receiverId})
+             reqStatus=await FriendRequest.findOneAndDelete({sender_id,receiver_id})
         }
         res.status(200).send(reqStatus)
     }catch(e){
-        res.status(500).send()
+        res.status(500).send(e)
 
     }
 })

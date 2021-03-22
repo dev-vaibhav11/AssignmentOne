@@ -14,9 +14,6 @@ const commentSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'Story'
     },
-    total:{
-        type:Number
-    }
 },{
     timestamps:true
 })
