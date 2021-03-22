@@ -53,7 +53,7 @@ router.get('/user/me',auth,async(req,res)=>{
 })
 
 //get all user
-router.get('/user/:name',async(req,res)=>{
+router.get('/user/:name',auth,async(req,res)=>{
     const name=req.params.name
     
     try{
