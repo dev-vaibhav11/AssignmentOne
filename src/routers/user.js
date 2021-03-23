@@ -16,6 +16,32 @@ router.post('/user',async(req,res)=>{
     }
 })
 
+//update user
+router.patch('/user/update',auth,async(req,res)=>{
+    const updates=Object.keys(req.body)
+    const allowedUpdates=['name','email','password','age','gender','dob']
+    const isValid=updates.every((update)=>allowedUpdates.includes(update))
+    
+    if(!isValid){
+        return res.status(400).send({error:'Invalid updates!!'})
+    }
+    try{
+        //const user=await User.findById(req.params.id)
+        
+        updates.forEach((update)=>req.user[update]=req.body[update])
+        await req.user.save()
+
+        //const user=await User.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})
+
+    // if(!user){
+    //     return res.status(404).send()
+    //     }
+        res.send(req.user)
+    }catch(e){
+        res.status(500).send(e)
+    }
+
+})
 
 //login user
 router.post('/user/login',async(req,res)=>{
