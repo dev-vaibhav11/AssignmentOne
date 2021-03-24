@@ -2,7 +2,14 @@ require('./db/mongoose')
 const express=require('express')
 const userRouter=require('./routers/user')
 const storyRouter=require('./routers/story')
+const cors=require('cors')
 
+const whitelist = ["http://localhost:3000"];
+const corsOptionsDelegate = function (req, callback) {
+  let corsOptions = { credentials: true };
+  corsOptions['origin'] = whitelist.indexOf(req.header('Origin')) !== -1;
+  callback(null, corsOptions) // callback expects two parameters: error and options
+};
 
 const app=express();
 const port=process.env.PORT
