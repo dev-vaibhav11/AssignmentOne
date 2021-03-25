@@ -21,21 +21,43 @@ const storage=multer.diskStorage({
 
 const upload=multer({storage})
 
-router.post('/story/image',auth,upload.single('uploadImage'),async(req,res,next)=>{
-    //console.log(req.file.path)
-    const story=new Story({
-        description:req.body.description,
-        uploadImage:req.file.path,
-        owner:req.user._id
-    })
-    try{
-        await story.save()
-        res.status(200).send(story)
-    }catch(e){
-        res.send(e)
-        res.status(500).send()
-    } 
-    next()   
+// router.post('/story/image',auth,upload.single('uploadImage'),async(req,res,next)=>{
+//     //console.log(req.file.path)
+//     // "image":'/img/'+req.file.originalname,
+//     const story=new Story({
+//         description:req.body.description,
+//         uploadImage:req.file.path,
+//         owner:req.user._id
+//     })
+//     try{
+//         await story.save()
+//         res.status(200).send(story)
+//     }catch(e){
+//         res.send(e)
+//         res.status(500).send()
+//     } 
+//     next()   
+// })
+
+router.post('/story/image',auth,upload.single('uploadImage'),async(req,res)=>{
+   //console.log(req.body)
+    try
+    {
+      //  const path= 'src/imageFolder/'+req.file.originalname
+        // const path= '/img/d2.jpg'
+        const post= new Story({
+        "uploadImage":'src/imageFolder/'+req.file.originalname,
+        "description":req.body.description,
+        "owner":req.user._id
+        })
+        const post1=await post.save()
+        res.send(post1)
+       // console.log(post1)
+    }
+    catch(e)
+    {
+        res.status(400).send(e)
+    }
 })
 
 //comment on story
